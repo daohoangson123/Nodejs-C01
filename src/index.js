@@ -13,20 +13,28 @@ const data = fs.readFileSync(dataPath);
 
 const parseData = JSON.parse(data);
 
-let condition = true;
-
-while (condition) {
-    condition = false;
+const main = () => {
     console.log(`Chức năng:
         1.Hiển thị danh sách post
         2.Thêm post
         3.Sửa post
         4.Xóa post`);
 
+    const isContinue = () => {
+        rl.question(`Tiếp tục? (y) `, (response) => {
+            if (response === 'y') {
+                main();
+            } else {
+                rl.close();
+            }
+        });
+    };
+
     rl.question(`Chọn chức năng: `, (response) => {
         switch (response) {
             case '1':
                 console.table(parseData.posts);
+                isContinue();
                 break;
             case '2':
                 rl.question('id: ', (id) => {
@@ -35,6 +43,7 @@ while (condition) {
                             rl.question('topic: ', (topic) => {
                                 rl.question('author: ', (author) => {
                                     rl.question('date: ', (date) => {
+                                        isContinue();
                                         const pushData = {
                                             id: id,
                                             title: title,
@@ -62,6 +71,7 @@ while (condition) {
                             rl.question('topic: ', (topic) => {
                                 rl.question('author: ', (author) => {
                                     rl.question('date: ', (date) => {
+                                        isContinue();
                                         const updateData = {
                                             id: +id,
                                             title: title,
@@ -104,22 +114,16 @@ while (condition) {
                         parseData.posts.splice(index, 1);
                         fs.writeFileSync(dataPath, JSON.stringify(parseData));
                     }
+                    isContinue();
                 });
                 break;
             default:
                 break;
         }
-
-        rl.question(`Tiếp tục? y/n `, (response) => {
-            if (response === 'y') {
-                condition = true;
-            } else {
-                condition = false;
-                rl.close();
-            }
-        });
     });
-}
+};
+
+main();
 
 // while(contion ) => run program until meet condition
 
